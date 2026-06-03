@@ -1,0 +1,1463 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Urban Cognition Interface</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0a0a0a;
+  --gold:#c9a84c;
+  --gold-dim:#8a6f30;
+  --white:#f0ede6;
+  --gray:#888;
+  --light-gray:#333;
+}
+html{scroll-behavior:smooth;}
+body{
+  background:#0a0a0a;
+  color:#f0ede6;
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+}
+
+/* PASSWORD */
+#password-screen{
+  position:fixed;inset:0;
+  background:#0a0a0a;
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  z-index:9999;
+  gap:32px;
+}
+.pw-logo{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:0.4em;
+  color:#8a6f30;
+}
+.pw-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(28px,6vw,52px);
+  letter-spacing:0.08em;
+  color:#c9a84c;
+  text-align:center;
+  line-height:1.1;
+}
+.pw-sub{
+  font-size:11px;
+  letter-spacing:0.3em;
+  color:#888;
+  text-align:center;
+}
+.pw-input-wrap{
+  display:flex;flex-direction:column;
+  align-items:center;gap:12px;
+}
+.pw-input-wrap input{
+  background:transparent;
+  border:1px solid #333;
+  border-bottom:1px solid #c9a84c;
+  color:#f0ede6;
+  font-family:'Space Mono',monospace;
+  font-size:14px;
+  letter-spacing:0.3em;
+  padding:12px 20px;
+  text-align:center;
+  outline:none;
+  width:240px;
+  transition:border-color 0.3s;
+}
+.pw-input-wrap input:focus{border-color:#c9a84c;}
+.pw-btn{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:13px;
+  letter-spacing:0.4em;
+  color:#0a0a0a;
+  background:#c9a84c;
+  border:none;
+  padding:10px 32px;
+  cursor:pointer;
+  transition:opacity 0.2s;
+}
+.pw-btn:hover{opacity:0.8;}
+.pw-error{
+  font-size:11px;
+  letter-spacing:0.2em;
+  color:#c9a84c;
+  opacity:0;
+  transition:opacity 0.3s;
+}
+.pw-error.show{opacity:1;}
+
+/* MAIN */
+#main{display:none;}
+
+/* NOISE OVERLAY */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:1;
+  opacity:0.4;
+}
+
+/* COVER */
+#cover{
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  padding:60px 24px;
+  position:relative;
+  text-align:center;
+}
+#cover::before{
+  content:'';
+  position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 40%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.cover-label{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.5em;
+  color:#8a6f30;
+  margin-bottom:48px;
+}
+.cover-main-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(36px,9vw,88px);
+  letter-spacing:0.06em;
+  color:#c9a84c;
+  line-height:0.95;
+  margin-bottom:24px;
+}
+.cover-sub-title{
+  font-size:clamp(12px,2.5vw,16px);
+  letter-spacing:0.2em;
+  color:#f0ede6;
+  margin-bottom:8px;
+  font-weight:400;
+}
+.cover-dash{
+  font-family:'Space Mono',monospace;
+  font-size:11px;
+  letter-spacing:0.15em;
+  color:#888;
+  margin-bottom:48px;
+}
+.cover-author{
+  font-size:12px;
+  letter-spacing:0.3em;
+  color:#888;
+  margin-bottom:80px;
+}
+.cover-scroll{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.4em;
+  color:#8a6f30;
+  animation:pulse 2s ease-in-out infinite;
+}
+@keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
+
+/* NAV MENU */
+#nav-menu{
+  padding:80px 24px 40px;
+  max-width:640px;
+  margin:0 auto;
+}
+.nav-label{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.5em;
+  color:#8a6f30;
+  margin-bottom:40px;
+  text-align:center;
+}
+.nav-list{
+  list-style:none;
+  display:flex;flex-direction:column;
+  gap:0;
+}
+.nav-item a{
+  display:flex;
+  align-items:baseline;
+  gap:16px;
+  padding:16px 0;
+  border-bottom:1px solid #1a1a1a;
+  text-decoration:none;
+  transition:all 0.2s;
+}
+.nav-item a:hover .nav-title{color:#c9a84c;}
+.nav-item a:hover .nav-num{color:#c9a84c;}
+.nav-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:0.3em;
+  color:#333;
+  min-width:36px;
+}
+.nav-title{
+  font-size:13px;
+  letter-spacing:0.15em;
+  color:#888;
+  transition:color 0.2s;
+}
+
+/* CHAPTER SECTION */
+.chapter{
+  min-height:100vh;
+  padding:80px 24px;
+  max-width:680px;
+  margin:0 auto;
+  position:relative;
+}
+.chapter-header{
+  margin-bottom:64px;
+}
+.chapter-num{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:10px;
+  letter-spacing:0.5em;
+  color:#8a6f30;
+  margin-bottom:16px;
+  display:block;
+}
+.chapter-title-ja{
+  font-family:'Zen Kaku Gothic New',sans-serif;
+  font-size:clamp(22px,5vw,36px);
+  font-weight:700;
+  color:#f0ede6;
+  line-height:1.3;
+  margin-bottom:8px;
+  letter-spacing:0.05em;
+}
+.chapter-title-en{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(13px,3vw,18px);
+  letter-spacing:0.3em;
+  color:#c9a84c;
+}
+.chapter-divider{
+  width:40px;
+  height:1px;
+  background:#c9a84c;
+  margin:24px 0;
+  opacity:0.5;
+}
+
+/* MUSIC */
+.music-block{
+  display:flex;
+  align-items:center;
+  gap:16px;
+  padding:16px 20px;
+  border:1px solid #1a1a1a;
+  margin-bottom:48px;
+  background:rgba(201,168,76,0.03);
+}
+.music-qr{
+  width:56px;height:56px;
+  background:#1a1a1a;
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.music-qr span{
+  font-size:8px;
+  color:#333;
+  text-align:center;
+  letter-spacing:0.1em;
+  font-family:'Space Mono',monospace;
+}
+.music-info{
+  flex:1;
+}
+.music-label{
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.4em;
+  color:#8a6f30;
+  margin-bottom:4px;
+}
+.music-title{
+  font-size:13px;
+  color:#888;
+  letter-spacing:0.1em;
+}
+
+/* BODY TEXT */
+.chapter-body{
+  font-size:15px;
+  line-height:2.2;
+  color:#c8c4bc;
+  letter-spacing:0.05em;
+}
+.chapter-body p{
+  margin-bottom:1.8em;
+}
+.chapter-body .line{
+  display:block;
+  margin-bottom:0.3em;
+}
+.chapter-body .break{
+  display:block;
+  margin-bottom:1.6em;
+}
+.chapter-body .divider{
+  display:block;
+  text-align:center;
+  color:#333;
+  margin:2em 0;
+  letter-spacing:0.5em;
+}
+.chapter-body .emphasis{
+  color:#f0ede6;
+  font-weight:400;
+}
+.chapter-body .gold{
+  color:#c9a84c;
+}
+.chapter-body .big{
+  font-size:18px;
+  color:#f0ede6;
+  font-weight:700;
+  display:block;
+  margin:1.5em 0 0.5em;
+  letter-spacing:0.1em;
+}
+.chapter-body .quote{
+  border-left:2px solid #c9a84c;
+  padding-left:20px;
+  margin:2em 0;
+  color:#f0ede6;
+  font-size:16px;
+  line-height:2;
+}
+.chapter-body .list-item{
+  display:flex;
+  gap:12px;
+  margin-bottom:0.4em;
+  color:#c8c4bc;
+}
+.chapter-body .list-item::before{
+  content:'—';
+  color:#c9a84c;
+  flex-shrink:0;
+}
+
+/* BACK NAV */
+.back-nav{
+  margin-top:80px;
+  padding-top:40px;
+  border-top:1px solid #1a1a1a;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.back-link{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.4em;
+  color:#8a6f30;
+  text-decoration:none;
+  transition:color 0.2s;
+}
+.back-link:hover{color:#c9a84c;}
+
+/* COVER SECTION (chapter 0) */
+.prologue-tag{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:10px;
+  letter-spacing:0.5em;
+  color:#8a6f30;
+}
+
+/* EPILOGUE */
+.epilogue-closing{
+  margin-top:60px;
+  padding:40px 0;
+  border-top:1px solid #1a1a1a;
+  text-align:center;
+}
+.epilogue-closing .lab{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:0.5em;
+  color:#8a6f30;
+  margin-bottom:12px;
+}
+.epilogue-closing .author{
+  font-size:13px;
+  letter-spacing:0.2em;
+  color:#888;
+}
+
+/* AFTER READING */
+#after-reading{
+  padding:80px 24px;
+  max-width:640px;
+  margin:0 auto;
+  text-align:center;
+}
+.ar-title{
+  font-family:'Bebas Neue',sans-serif;
+  font-size:11px;
+  letter-spacing:0.5em;
+  color:#8a6f30;
+  margin-bottom:48px;
+}
+.ar-list{
+  list-style:none;
+  display:flex;flex-direction:column;
+  gap:24px;
+  margin-bottom:64px;
+}
+.ar-list li{
+  font-size:13px;
+  letter-spacing:0.2em;
+  color:#555;
+  line-height:1.8;
+}
+.ar-list li span{
+  display:block;
+  font-family:'Bebas Neue',sans-serif;
+  font-size:10px;
+  letter-spacing:0.4em;
+  color:#333;
+  margin-bottom:2px;
+}
+.ar-closing{
+  font-size:13px;
+  letter-spacing:0.15em;
+  color:#888;
+  line-height:2.5;
+  margin-bottom:48px;
+}
+.ar-closing .gold{color:#c9a84c;}
+.ar-final{
+  font-family:'Space Mono',monospace;
+  font-size:10px;
+  letter-spacing:0.4em;
+  color:#333;
+}
+
+/* SCROLL FADE */
+.fade-in{
+  opacity:0;
+  transform:translateY(20px);
+  transition:opacity 0.8s ease, transform 0.8s ease;
+}
+.fade-in.visible{
+  opacity:1;
+  transform:translateY(0);
+}
+
+/* CHAPTER SEPARATOR */
+.ch-sep{
+  height:1px;
+  background:linear-gradient(to right, transparent, #1a1a1a, transparent);
+  margin:0 24px;
+}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD -->
+<div id="password-screen">
+  <div class="pw-logo">PUBLIC MENTOR LAB</div>
+  <div class="pw-title">Urban Cognition<br>Interface</div>
+  <div class="pw-sub">Members Only — アクセスコードを入力</div>
+  <div class="pw-input-wrap">
+    <input type="password" id="pw-input" placeholder="ACCESS CODE" autocomplete="off">
+    <button class="pw-btn" onclick="checkPassword()">ENTER</button>
+    <div class="pw-error" id="pw-error">コードが違います</div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="main">
+
+<!-- COVER -->
+<section id="cover">
+  <div class="cover-label">PUBLIC MENTOR LAB — WEBZINE vol.2</div>
+  <div class="cover-main-title">Urban<br>Cognition<br>Interface</div>
+  <div class="cover-sub-title">合意形成の前に、認知共有がある</div>
+  <div class="cover-dash">— 公園行政の覚書 2 —</div>
+  <div class="cover-author">浮貝 忍 / UKKY｜2025</div>
+  <div class="cover-scroll">scroll ↓</div>
+</section>
+
+<!-- NAV -->
+<div id="nav-menu">
+  <div class="nav-label">どこから入りますか</div>
+  <ul class="nav-list">
+    <li class="nav-item"><a href="#ch0"><span class="nav-num">序</span><span class="nav-title">合意形成の前に、認知共有がある</span></a></li>
+    <li class="nav-item"><a href="#ch1"><span class="nav-num">01</span><span class="nav-title">認知とは何か</span></a></li>
+    <li class="nav-item"><a href="#ch2"><span class="nav-num">02</span><span class="nav-title">人は同じ世界を見ていない</span></a></li>
+    <li class="nav-item"><a href="#ch3"><span class="nav-num">03</span><span class="nav-title">認知差は問題なのか</span></a></li>
+    <li class="nav-item"><a href="#ch4"><span class="nav-num">04</span><span class="nav-title">主観が都市をつくる</span></a></li>
+    <li class="nav-item"><a href="#ch5"><span class="nav-num">05</span><span class="nav-title">認知のレイヤー</span></a></li>
+    <li class="nav-item"><a href="#ch6"><span class="nav-num">06</span><span class="nav-title">Urban Cognition Interface (remix)</span></a></li>
+    <li class="nav-item"><a href="#ch7"><span class="nav-num">07</span><span class="nav-title">LAYERED PARK (remix)</span></a></li>
+    <li class="nav-item"><a href="#ch8"><span class="nav-num">終</span><span class="nav-title">ギフト</span></a></li>
+  </ul>
+</div>
+
+<div class="ch-sep"></div>
+
+<!-- 序章 -->
+<section class="chapter fade-in" id="ch0">
+  <div class="chapter-header">
+    <span class="chapter-num">PROLOGUE</span>
+    <div class="chapter-title-ja">合意形成の前に、<br>認知共有がある</div>
+    <div class="chapter-title-en">Before Consensus, Cognition</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">序章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">会議をする。</span>
+    <span class="line">意見を出し合う。</span>
+    <span class="line">議論を重ねる。</span>
+    <span class="break">合意形成を目指す。</span>
+    <span class="line">そんな場面は、社会のあちこちにある。</span>
+    <span class="break">行政でも、企業でも、地域活動でも。</span>
+    <span class="break">それ自体は大切なことだと思う。</span>
+    <span class="line">でも時々、妙な感覚になる。</span>
+    <span class="line">なぜこんなにも話が噛み合わないのだろう。</span>
+    <span class="line">同じテーマについて話しているのに。</span>
+    <span class="line">同じ言葉を使っているはずなのに。</span>
+    <span class="break">目指している方向も、そこまでズレてる感じしないのに。</span>
+    <span class="line">どこか噛み合わない。</span>
+    <span class="line">議論が平行線になりがち。</span>
+    <span class="break">そんな場面を幾度となく見てきた。</span>
+    <span class="divider">⸻</span>
+    <span class="line">意見の食い違いかな。</span>
+    <span class="line">価値観の違いかな。</span>
+    <span class="break">立場の違いかな。</span>
+    <span class="line">もちろん、それもある。</span>
+    <span class="line">でも、それだけでは説明がつかない。</span>
+    <span class="line">もっと手前に何かがある。</span>
+    <span class="break">そんな感覚がずっと残っていた。</span>
+    <span class="divider">⸻</span>
+    <span class="break">例えば公園の話をする。</span>
+    <div class="quote">「安全な公園が必要だ。」</div>
+    <span class="break">その言葉に反対する人は少ない。</span>
+    <span class="break">でもその場にいる人たちが、そこで思い描いている風景は、果たして同じものなのか。</span>
+    <span class="line">管理者は事故のない状態を。</span>
+    <span class="line">保護者は見守りやすい環境を。</span>
+    <span class="line">高齢者は安心して座れる場所を。</span>
+    <span class="break">子どもは自由に遊べることを。</span>
+    <span class="break">「安全」という同じ言葉なのに、たぶん見ている風景が違う。</span>
+    <span class="divider">⸻</span>
+    <span class="line">それは意見の違いではない。</span>
+    <span class="line">その前にある、</span>
+    <span class="big">「見え方の違い」</span>
+    <span class="break">なのではないか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">行政は制度やルールを。</span>
+    <span class="line">地域住民は経験や慣習を。</span>
+    <span class="line">技術者は構造や条件を。</span>
+    <span class="break">アーティストは文脈や感覚を。</span>
+    <span class="line">同じ都市の話。</span>
+    <span class="break">でも、同じ世界を見ているわけではなさそうだ。</span>
+    <span class="divider">⸻</span>
+    <span class="break">もしそうだとしたら。</span>
+    <span class="break">本当に必要なのは、すぐに意見をぶつけ合って議論することではなく、</span>
+    <span class="break">まず、</span>
+    <div class="quote">「何が見えているのか、何に色がついているのか」</div>
+    <span class="break">を共有することなのではないか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">道路は、人の移動を支える。</span>
+    <span class="line">通信網は、情報の共有を支える。</span>
+    <span class="break">では、人と人が見ている世界を共有するための基盤はあるだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">都市を変える方法ではなく、都市の見え方を共有する。</span>
+    <span class="break">合意形成の方法ではなく、認知共有の方法を探る。</span>
+    <span class="divider">⸻</span>
+    <span class="line">人はなぜ同じ世界を違って見るのか。</span>
+    <span class="line">認知差は問題なのか。</span>
+    <span class="break">そして、違う見え方を持ったまま共に生きるために、どんなインフラが必要なのか。</span>
+    <span class="divider">⸻</span>
+    <span class="break emphasis">合意形成の前に、認知共有がある。</span>
+    <span class="break">その仮説を辿ってみたいと思う。</span>
+    <span class="line">まずは「認知とは何か」から。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch1" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第1章 -->
+<section class="chapter fade-in" id="ch1">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 01</span>
+    <div class="chapter-title-ja">認知とは何か</div>
+    <div class="chapter-title-en">What Is Cognition</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第1章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">認知という言葉を使っている。</span>
+    <span class="line">でも実際のところ、それが何なのかを考える機会は少ない。</span>
+    <span class="line">認知科学の話をしたいわけでもない。</span>
+    <span class="line">脳の仕組みを説明したいわけでもない。</span>
+    <span class="break">もっと身近な話。</span>
+    <span class="divider">⸻</span>
+    <span class="line">人は世界を見ている。</span>
+    <span class="line">そう思っている。</span>
+    <span class="break">でも本当に「見ている」のだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">例えば公園にいる。</span>
+    <span class="line">同じ場所にいる。</span>
+    <span class="break">同じ時間を過ごしている。</span>
+    <span class="break">それなのに、人によって見えているものは違う。</span>
+    <span class="line">子どもは遊具を見る。</span>
+    <span class="line">保護者は危険な場所がないかを見る。</span>
+    <span class="line">管理者は設備の損傷度合を見る。</span>
+    <span class="line">鳥が好きな人は木々の隙間を見る。</span>
+    <span class="break">写真を撮る人は光の射し具合を見る。</span>
+    <span class="divider">⸻</span>
+    <span class="line emphasis">同じ公園。</span>
+    <span class="break emphasis">でも見ている世界は同じではない。</span>
+    <span class="divider">⸻</span>
+    <span class="line">人は世界のすべてを見ているわけではない。</span>
+    <span class="line">見ているのは、</span>
+    <span class="big">自分にとって意味のある断片だ。</span>
+    <span class="divider">⸻</span>
+    <span class="line">気になるもの。</span>
+    <span class="line">大切なもの。</span>
+    <span class="line">関心のあるもの。</span>
+    <span class="line">経験したことがあるもの。</span>
+    <span class="line">守りたいもの。</span>
+    <span class="break">違和感を覚えるもの。</span>
+    <span class="divider">⸻</span>
+    <span class="line">そうしたものが浮かび上がり、</span>
+    <span class="break">それ以外が背景になる。</span>
+    <span class="divider">⸻</span>
+    <span class="line">つまり認知とは、</span>
+    <span class="line">世界をそのまま受け取ることではない。</span>
+    <span class="line">世界の中から、</span>
+    <span class="break">自分にとって引っかかる断片を見出すこと。</span>
+    <span class="divider">⸻</span>
+    <span class="line">だから同じ景色を見ても、</span>
+    <span class="line">同じ言葉を聞いても、</span>
+    <span class="line">同じ出来事に触れても、</span>
+    <span class="break">受け取るものが違う。</span>
+    <span class="divider">⸻</span>
+    <span class="line">それは間違いではない。</span>
+    <span class="line">能力の差でもない。</span>
+    <span class="line">立場や経験、</span>
+    <span class="line">関心や記憶によって、</span>
+    <span class="break">自然に起きること。</span>
+    <span class="divider">⸻</span>
+    <span class="line">そして公園は、</span>
+    <span class="break">そうした無数の認知が重なってできている。</span>
+    <span class="break">さらに俯瞰して都市まで視座を上げても、同じように認知が重なる。むしろもっと複雑に折り重なっている。</span>
+    <span class="line">制度だけで都市はできない。</span>
+    <span class="line">空間だけでもできない。</span>
+    <span class="line">そこにいる人々が、何を見て、何を感じ、何を断片として受け取るか。</span>
+    <span class="break">その積み重ねが都市になる。</span>
+    <span class="divider">⸻</span>
+    <span class="line">建物や道路だけを見ているだけでは足りない。</span>
+    <span class="line">人が何を見ているのか。</span>
+    <span class="line">何を見落としているのか。</span>
+    <span class="line">何に違和感を持っているのか。</span>
+    <span class="break">そこにも目を向ける必要がある。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">認知は意見の前にある。</span>
+    <span class="line gold">認知は価値観の前にある。</span>
+    <span class="break gold">認知は合意形成の前にある。</span>
+    <span class="divider">⸻</span>
+    <span class="line">まずは、</span>
+    <span class="line">人が見ている世界そのものが違う。</span>
+    <span class="line">その事実から始める。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch2" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第2章 -->
+<section class="chapter fade-in" id="ch2">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 02</span>
+    <div class="chapter-title-ja">人は同じ世界を<br>見ていない</div>
+    <div class="chapter-title-en">No One Sees the Same World</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第2章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">人が見ている世界。</span>
+    <span class="line">でも実際には、世界のすべてを見ているわけではない。</span>
+    <span class="line">自分にとって意味のある断片を見ている。</span>
+    <span class="break">前章ではそんな話をした。</span>
+    <span class="break">もしそうだとしたら。当然のことながら、人によって見えている世界は違うことになる。</span>
+    <span class="divider">⸻</span>
+    <span class="line">同じ場所にいる。</span>
+    <span class="line">同じ出来事に立ち会う。</span>
+    <span class="line">同じ言葉を聞く。</span>
+    <span class="line">それでも、</span>
+    <span class="break">受け取っているものが違う。</span>
+    <span class="divider">⸻</span>
+    <span class="break">例えば地域のお祭り。</span>
+    <span class="line">ある人は賑わいを見る。</span>
+    <span class="line">ある人は伝統を見る。</span>
+    <span class="line">ある人は経済効果を見る。</span>
+    <span class="line">ある人は騒音を見る。</span>
+    <span class="break">ある人は再会を見る。</span>
+    <span class="divider">⸻</span>
+    <span class="line">お祭りそのものは一つ。</span>
+    <span class="line">でも、</span>
+    <span class="break">そこに存在している世界は一つではない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">都市の中では、こうしたことが無数に起きている。</span>
+    <span class="line">公園でも。道路でも。商店街でも。学校でも。駅前でも。</span>
+    <span class="divider">⸻</span>
+    <span class="line">同じ都市を見ている。</span>
+    <span class="line">でも、</span>
+    <span class="break">同じ都市を認知しているわけではない。</span>
+    <span class="divider">⸻</span>
+    <span class="line">だから時々、話が噛み合わなくなる。</span>
+    <span class="line">相手が間違っているわけではない。</span>
+    <span class="line">自分が正しいわけでもない。</span>
+    <span class="break">そもそも見ている断片が違う。</span>
+    <span class="divider">⸻</span>
+    <span class="break">例えば、</span>
+    <div class="quote">「もっと賑わいが必要だ」</div>
+    <span class="break">という言葉。</span>
+    <span class="line">ある人は人の多さを。</span>
+    <span class="line">ある人は交流の多さを。</span>
+    <span class="line">ある人は売上の向上を。</span>
+    <span class="break">ある人はイベントの開催を。</span>
+    <span class="line">同じ言葉なのに、</span>
+    <span class="break">見えている風景は違う。</span>
+    <span class="divider">⸻</span>
+    <span class="line">そして多くの場合、その違いに気づかない。</span>
+    <span class="line">自分が見ている世界を、</span>
+    <span class="break">相手も見ていると思いこんでしまう。</span>
+    <span class="divider">⸻</span>
+    <span class="line">だから対立が生まれる。</span>
+    <span class="line">だから議論が平行線になる。</span>
+    <span class="line">だから、</span>
+    <div class="quote">「なぜ分かってくれないのだろう」</div>
+    <span class="break">と思ってしまう。</span>
+    <span class="divider">⸻</span>
+    <span class="line emphasis">しかし実際には、</span>
+    <span class="line emphasis">分かっていないのではなく、</span>
+    <span class="break emphasis">見えていないのではないか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">認知の違いは、意見の違いよりも根深い。</span>
+    <span class="line">価値観の違いよりも手前にある。</span>
+    <span class="break">世界の見え方そのものの違いだから。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そして都市とは、そうした異なる認知が重なり合う場所でもある。</span>
+    <span class="line">行政。住民。事業者。技術者。研究者。来訪者。子ども。高齢者…</span>
+    <span class="divider">⸻</span>
+    <span class="line">それぞれが違う断片を見ている。</span>
+    <span class="line">だから都市は複雑になる。</span>
+    <span class="line">しかし同時に、</span>
+    <span class="break">だからこそ都市は豊かになる。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">問題は認知差ではない。</span>
+    <span class="break gold">認知差が見えないこと。</span>
+    <span class="divider">⸻</span>
+    <span class="line">認知差が見えないと対立になる。</span>
+    <span class="break">認知差が見えると入口になる。</span>
+    <span class="divider">⸻</span>
+    <span class="line">認知差は本当に問題なのか。</span>
+    <span class="line">問いはさらに深度を増していく。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch3" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第3章 -->
+<section class="chapter fade-in" id="ch3">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 03</span>
+    <div class="chapter-title-ja">認知差は問題なのか</div>
+    <div class="chapter-title-en">Is the Gap a Problem</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第3章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">人は同じ世界を見ていない。</span>
+    <span class="line">だとすると、次に浮かぶ問いがある。</span>
+    <span class="break">その認知差は問題なのか。</span>
+    <span class="break">違うものを見ているのなら、同じものを見るようにした方がいいのか。</span>
+    <span class="break">認知は揃えた方がいいのか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">おそらく答えは違う。</span>
+    <span class="break">認知差そのものは問題にならない。</span>
+    <span class="line">むしろ認知差があるからこそ、</span>
+    <span class="break">世界は豊かになる。</span>
+    <span class="break">同じ公園を見ても、</span>
+    <span class="line">木陰を見る人がいる。</span>
+    <span class="line">遊具を見る人がいる。</span>
+    <span class="line">危険箇所を見る人がいる。</span>
+    <span class="break">歴史を見る人がいる。</span>
+    <span class="line">それぞれが違う断片を拾う。</span>
+    <span class="break">だから見える世界は広がる。</span>
+    <span class="line">もし全員が同じものしか見なかったら。</span>
+    <span class="break">世界は極端にうすっぺらい。</span>
+    <span class="divider">⸻</span>
+    <span class="break">都市も同じ。</span>
+    <span class="break">住民。行政。事業者。研究者。観光客。子ども。高齢者。</span>
+    <span class="break">それぞれが違う世界を見ている。</span>
+    <span class="break">だから都市には多様な可能性が生まれる。</span>
+    <span class="line">認知差は欠けたものではなく、</span>
+    <span class="big gold">「資源」</span>
+    <span class="divider">⸻</span>
+    <span class="break">問題が起きるのは別の場所だ。</span>
+    <span class="line">自分が見ている世界が、相手にも同じように見えていると思い込んだ時。</span>
+    <span class="break">そこからすれ違いが始まる。</span>
+    <span class="divider">⸻</span>
+    <span class="line">行政は説明したつもり。</span>
+    <span class="line">住民は聞いてもらえなかったと嘆く。</span>
+    <span class="line">事業者は合理的な判断。</span>
+    <span class="break">利用者は納得できない。</span>
+    <span class="line">誰かが間違っているとは限らない。</span>
+    <span class="line">そもそも見ている世界が違うから。</span>
+    <span class="line">認知している断片が違うから。</span>
+    <span class="break">故に話が噛み合わない。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">認知差が問題なのではない。</span>
+    <span class="break gold">相互に認知差が見えていないことが問題。</span>
+    <span class="divider">⸻</span>
+    <span class="break">公園のワークショップを開く。</span>
+    <div class="quote">「どんな公園にしたいですか。」</div>
+    <span class="break">その地域には高齢者が多く、参加者もほとんどが高齢者だった。</span>
+    <span class="break">出てきた意見は、</span>
+    <div class="quote">「子どもが楽しく遊べる遊具がたくさんある公園にしたい」</div>
+    <span class="break">というものだった。</span>
+    <span class="divider">⸻</span>
+    <span class="break">この意見は間違いではない。</span>
+    <span class="break">むしろ地域を思う気持ちから生まれた、大切な意見だ。</span>
+    <span class="break">ただし。</span>
+    <span class="break">それは高齢者自身の体験から生まれた認知ではない。</span>
+    <span class="line">高齢者が想像する子どもたち。</span>
+    <span class="line">高齢者が願う未来。</span>
+    <span class="break">そうした認知の断片から生まれた意見である。</span>
+    <span class="divider">⸻</span>
+    <span class="break">しかし実際の議論では、その背景をしばしば見えなくしてしまう。</span>
+    <span class="line">そして、</span>
+    <div class="quote">「地域の意見」</div>
+    <span class="break">という一つの塊として扱う。</span>
+    <span class="divider">⸻</span>
+    <span class="break">すると本来存在していた認知差も消えてしまう。</span>
+    <span class="line">高齢者が見ている地域。</span>
+    <span class="line">子育て世代が見ている地域。</span>
+    <span class="break">子ども自身が見ている地域。</span>
+    <span class="line">それぞれ違う世界があるにもかかわらず。</span>
+    <span class="break">ひとつの意見として平準化される。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そこで始まるのは、</span>
+    <span class="line">正しいか。多数か。採用するべきか。</span>
+    <span class="break">そんな評価や判断の議論だ。</span>
+    <span class="break">でもその前に、本当は見えていなければならないものがある。</span>
+    <span class="line">誰がどんな世界を見ているのか。</span>
+    <span class="break">どんな認知からその意見が生まれたのか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">認知差が見えるようになれば何が変わるのか。</span>
+    <span class="line">対立しているように見えた意見の背景が見えてくる。</span>
+    <span class="break">そして問いそのものが変わり始める。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">どちらが正しいか。</span>
+    <span class="line gold">ではなく、</span>
+    <span class="break gold">なぜそう見えているか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">評価や判断の前に、まず認知を知る。</span>
+    <span class="line">合意形成の前に、まず認知を共有する。</span>
+    <span class="line">認知差を消すのではない。</span>
+    <span class="line">違うまま共存する。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch4" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第4章 -->
+<section class="chapter fade-in" id="ch4">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 04</span>
+    <div class="chapter-title-ja">主観が都市をつくる</div>
+    <div class="chapter-title-en">Subjectivity Builds the City</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第4章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">認知差は、ある。</span>
+    <span class="line">認知差は、見えることが大切だ。</span>
+    <span class="break">そもそも、その認知とはどこから生まれるのか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">人は世界をそのまま見ているわけではない。</span>
+    <span class="line">経験。記憶。立場。関心。感情。</span>
+    <span class="break">そうしたものを通して世界を見ている。</span>
+    <span class="divider">⸻</span>
+    <span class="break">同じ公園でも。</span>
+    <span class="line">子どもにとっては遊び場。</span>
+    <span class="line">高齢者にとっては散歩道。</span>
+    <span class="line">保護者にとっては見守りの場所。</span>
+    <span class="break">管理者にとっては維持管理の対象。</span>
+    <span class="line">同じ場所なのに、</span>
+    <span class="break">見えている世界は違う。</span>
+    <span class="divider">⸻</span>
+    <span class="line">情報量の差か。</span>
+    <span class="break">知識の差か。</span>
+    <span class="line">いや、それは、</span>
+    <span class="big">主観の差。</span>
+    <span class="line">何を大切だと感じるのか。</span>
+    <span class="line">何に目が向くのか。</span>
+    <span class="line">何を見落とすのか。</span>
+    <span class="line">それらは、主観で変わる。</span>
+    <span class="break">それらの違いが認知を生み出している。</span>
+    <span class="divider">⸻</span>
+    <span class="line">だからこそ都市は、単一ではなく、複層になる。</span>
+    <span class="line">住民の都市。観光客の都市。事業者の都市。子どもの都市。高齢者の都市。</span>
+    <span class="break">それぞれがそれぞれ認知された形で存在している。</span>
+    <span class="divider">⸻</span>
+    <span class="break">物理的な都市はひとつでしかない。</span>
+    <span class="line">道路も。建物も。公園も。</span>
+    <span class="line">ある種普遍的なものとしてそこにある。</span>
+    <span class="line">でも、</span>
+    <span class="break">意味としての都市は複層に編まれている。</span>
+    <span class="divider">⸻</span>
+    <span class="line emphasis">人は都市そのものを生きているわけではない。</span>
+    <span class="break emphasis">自らが認知した都市として、その認知の中で生きている。</span>
+    <span class="divider">⸻</span>
+    <span class="break">だから都市を理解しようとするなら、客観情報だけでは足りない。</span>
+    <span class="line">人口。面積。利用者数。経済指標。</span>
+    <span class="break">それらは都市を構成する重要な要素だ。</span>
+    <span class="line">でもそれだけでは、</span>
+    <span class="break">人がどんな都市を生きているのかは見えてこない。</span>
+    <span class="divider">⸻</span>
+    <span class="line">都市の中には、無数の主観が存在している。</span>
+    <span class="break">そしてその重なりの上に、都市が立ち上がっている。</span>
+    <span class="line">匿名の都市はない。</span>
+    <span class="break">画一的な都市も存在しない。</span>
+    <span class="line">見えているのは同じ街並みでも、</span>
+    <span class="break">その上には無数の認知が折り重なっている。</span>
+    <span class="line">目には見えない。</span>
+    <span class="line">しかし確かに存在している。</span>
+    <span class="big gold">都市のもうひとつの地層。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch5" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第5章 -->
+<section class="chapter fade-in" id="ch5">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 05</span>
+    <div class="chapter-title-ja">認知のレイヤー</div>
+    <div class="chapter-title-en">The Cognitive Layer</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第5章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">都市のもうひとつの地層。</span>
+    <span class="break">少し大げさな表現に聞こえるかもしれない。</span>
+    <span class="break">でも実際に都市の中には、目には見えない地層が存在している。</span>
+    <span class="divider">⸻</span>
+    <span class="break">公園のベンチ。</span>
+    <span class="break">物理的には単なる座るための休憩施設。管理台帳上のベンチA。</span>
+    <span class="break">でも、人によって意味や価値が変わる。</span>
+    <span class="line">お気に入りのプライベート空間。</span>
+    <span class="line">見守り拠点。</span>
+    <span class="line">甘酸っぱい記憶。</span>
+    <span class="line">待ち合わせ。</span>
+    <span class="break">遊具。</span>
+    <span class="break">物理的な存在として以上の何かが、それぞれに意味をもって存在している。</span>
+    <span class="line">しかも、それぞれはそれぞれの認知の上に独立している。</span>
+    <span class="divider">⸻</span>
+    <span class="break">座る場所を確保するためだったら、ただ数を増やせばいい。</span>
+    <span class="break">しかし。</span>
+    <span class="break">人は機能だけで選択しない。</span>
+    <span class="line">右から3番目の桜の木陰。</span>
+    <span class="line">夕方になると西日が差し込む。</span>
+    <span class="break">少しだけ人通りから外れている。</span>
+    <span class="line">だから落ち着く。</span>
+    <span class="break">だからそこへ向かう。</span>
+    <span class="divider">⸻</span>
+    <span class="line emphasis">ベンチとして見れば代替できる。</span>
+    <span class="break emphasis">でも、その場所としては代替できない。</span>
+    <span class="break">そこには、その人だけの認知が宿っている。</span>
+    <span class="break">それはベンチという汎用性ではなく、その場所だけの唯一性だ。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そのことを誰かに共有することはほぼない。</span>
+    <span class="break">だから、そうした認知は表に出てきにくい。</span>
+    <span class="line">アンケートにも。利用者数にも。統計にも。</span>
+    <span class="break">だから見えなくなる。</span>
+    <span class="line">しかし見えなくなることと、</span>
+    <span class="break">存在しないことは違う。</span>
+    <span class="divider">⸻</span>
+    <span class="break">さらに、その唯一性をもった認知は、独立していながら、独占をしない。</span>
+    <span class="line">朝は散歩中の高齢者</span>
+    <span class="line">昼は子育て中の保護者</span>
+    <span class="line">夕方は学生</span>
+    <span class="break">夜は仕事帰りの人</span>
+    <span class="break">それぞれにとって大切な場所になり得る。</span>
+    <span class="break">ことさらに公園といった公共空間では、配慮や思いやりといった形で、お気に入りだからこそ生まれる、認知共存が起こる。</span>
+    <span class="break">しかも、お互いの存在にすら、気づかないままに。</span>
+    <span class="divider">⸻</span>
+    <span class="break">それぞれの当事者固有の認知。ストーリーとも呼べる。</span>
+    <span class="break">一見パラレルワールドで起こっているような話だが、それは確かに同じ世界で繰り広げられる認知の物語。</span>
+    <span class="line">あの丘の上。駅までの道。あの坂の途中。</span>
+    <span class="break">あちこちに複層に存在するお気に入り型の認知。</span>
+    <span class="divider">⸻</span>
+    <span class="break">逆に</span>
+    <span class="line">気になるけど入れないお店。</span>
+    <span class="line">いつも車だから通り過ぎてしまう路地。</span>
+    <span class="break">今はビルになってしまった生家。</span>
+    <span class="break">こういった未知、喪失型の認知もある。</span>
+    <span class="divider">⸻</span>
+    <span class="break">認知は見えるものだけではない。</span>
+    <span class="line">引越し先で聞いた夕焼けチャイム。</span>
+    <span class="line">秋に香る金木犀。</span>
+    <span class="line">新緑の季節の芝生の手触り。</span>
+    <span class="break">夕飯時に漂うカレーの匂い。</span>
+    <span class="divider">⸻</span>
+    <span class="line">場所を認知しているようでいて、</span>
+    <span class="line">実は記憶を認知している。</span>
+    <span class="line">時間を認知している。</span>
+    <span class="break">季節を認知している。</span>
+    <span class="divider">⸻</span>
+    <span class="line">都市には、目に見える景色だけではない認知も存在している。</span>
+    <span class="break">しかもそれらは、どこにも記録されていない。</span>
+    <span class="line">地図にも。統計にも。台帳にも。</span>
+    <span class="divider">⸻</span>
+    <span class="line">ベンチA。</span>
+    <span class="line">たったひとつのベンチですら、</span>
+    <span class="break">これだけの認知の物語を抱えている。</span>
+    <span class="divider">⸻</span>
+    <span class="line">だとしたら。</span>
+    <span class="line">都市の中には、どれほどの認知が存在しているのだろうか。</span>
+    <span class="break">どれほどの物語が折り重なっているのだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そして私たちは、その存在をほとんど知らないまま暮らしている。</span>
+    <span class="line">都市計画にも。地図にも。統計にも。</span>
+    <span class="break gold">存在しないことになっている。</span>
+    <span class="divider">⸻</span>
+    <span class="line">けれど、存在しないわけではない。</span>
+    <span class="break emphasis">ただ見えていないだけ。</span>
+    <span class="divider">⸻</span>
+    <span class="line">そしておそらく、</span>
+    <span class="line">私たちはまだ、</span>
+    <span class="line">この膨大な認知の地層を扱う方法を持っていない。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch6" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第6章 -->
+<section class="chapter fade-in" id="ch6">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 06</span>
+    <div class="chapter-title-ja">Urban Cognition Interface<br><span style="font-size:0.6em;color:#8a6f30;font-weight:300;">(remix)</span></div>
+    <div class="chapter-title-en">Urban Cognition Interface (remix)</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第6章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">都市には認知の地層がある。</span>
+    <span class="line">それは確かに存在している。</span>
+    <span class="break">しかし、まだそれを扱う方法がない。</span>
+    <span class="break">どうすればいいのだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">同じ都市を見ていても、人によって見えているものは違う。</span>
+    <span class="line">行政は制度を見る。市民は経験を見る。技術者は構造を見る。</span>
+    <span class="line">アーティストは文脈を見る。研究者は傾向を見る。事業者は機会を見る。</span>
+    <span class="divider">⸻</span>
+    <span class="line">都市を同じく見ている。</span>
+    <span class="line">でも、同じ都市があるわけではない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">例えば、「安全な公園」という言葉。</span>
+    <span class="line">行政にとっては管理責任かもしれない。</span>
+    <span class="line">保護者にとっては人の目があることかもしれない。</span>
+    <span class="line">子どもにとっては自由に遊べることかもしれない。</span>
+    <span class="break">高齢者にとっては安心して座れることかもしれない。</span>
+    <span class="line">どれも安全な公園の話。</span>
+    <span class="break">でも、見えている風景が違う。</span>
+    <span class="divider">⸻</span>
+    <span class="break">とかく、その違いを意見の対立として捉えてしまう。</span>
+    <span class="line">どちらが正しいのか。どちらを優先するべきか。どう合意するべきか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">しかし、その前に必要なことがある。</span>
+    <span class="big emphasis">互いが何を見ているのかを知ることだ。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">認知差は問題ではない。</span>
+    <span class="break gold">認知差はむしろ資源。</span>
+    <span class="line">問題は、その認知差が見えないこと。</span>
+    <span class="divider">⸻</span>
+    <span class="line">見えていないから、対話が噛み合わない。</span>
+    <span class="line">見えていないから、互いを理解できない。</span>
+    <span class="break">見えていないから、存在しないものとして扱われてしまうこともある。</span>
+    <span class="divider">⸻</span>
+    <span class="line">認知を揃える必要はない。</span>
+    <span class="break emphasis">認知を共有すること。</span>
+    <span class="divider">⸻</span>
+    <span class="break">認知共有とは、意見を一致させることでもなく、合意形成でもなく、多数決でもない。</span>
+    <span class="line">それぞれが見ている世界を、持ち寄る。</span>
+    <span class="break">違いを消すのではなく、違いが見えるようにすること。</span>
+    <span class="line">その先に、初めて対話が生まれる。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">合意形成の前に、</span>
+    <span class="break gold">認知共有がある。</span>
+    <span class="divider">⸻</span>
+    <span class="break">この考え方を、</span>
+    <span class="big gold">Urban Cognition Interface</span>
+    <span class="break">と名づけてみた。</span>
+    <span class="break">都市認知インターフェース。</span>
+    <span class="break">それは都市を分析するためのツールではない。</span>
+    <span class="break emphasis">都市をどう見ているかを共有するためのインターフェースだ。</span>
+    <span class="divider">⸻</span>
+    <span class="line">GISでもない。分析ダッシュボードでもない。合意形成ツールでもない。</span>
+    <span class="break">都市に存在する認知を扱うための基盤。</span>
+    <span class="break">都市のもうひとつの地層に触れるためのインターフェース。</span>
+    <span class="divider">⸻</span>
+    <span class="line">道路には道路台帳がある。</span>
+    <span class="break">公園には公園台帳がある。</span>
+    <span class="break">では、認知には何があるだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="line">好きな場所。大切な場所。失われた場所。気になる場所。忘れられない場所。</span>
+    <span class="break">そうした認知は確かに存在している。</span>
+    <span class="line">しかし、ほとんど記録されていない。共有もされていない。当然、蓄積もされていない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">でも、都市の中には、膨大な認知の地層が眠っている。</span>
+    <span class="break">Urban Cognition Interfaceは、その地層を可視化し、共有し、行き来するための試みである。</span>
+    <span class="divider">⸻</span>
+    <span class="break">都市は単一の空間だけでできているわけではない。</span>
+    <span class="line">制度。記憶。経験。文化。感情。関係性。</span>
+    <span class="break">そうした無数の認知が重なり合い、都市を形づくっている。</span>
+    <span class="break">だから、一枚の地図では足りない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">必要なのは、複数の認知のレイヤーを行き来できること。</span>
+    <span class="break">不安も迷いも食い違いも。あるものを見えなくしない。</span>
+    <span class="break">異なる立場の認知に触れられること。</span>
+    <span class="break">都市の見え方を共有できること。</span>
+    <span class="divider">⸻</span>
+    <span class="break">都市を変える前に、都市の見え方を共有する。</span>
+    <span class="divider">⸻</span>
+    <span class="line">認知が重なった先に</span>
+    <span class="line">新しい風景が、</span>
+    <span class="line">見落としていた風景が、</span>
+    <span class="break">そっと浮かび上がる。</span>
+    <span class="divider">⸻</span>
+    <span class="line gold">合意形成の前に、</span>
+    <span class="line gold">認知共有がある。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch7" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 第7章 -->
+<section class="chapter fade-in" id="ch7">
+  <div class="chapter-header">
+    <span class="chapter-num">CHAPTER 07</span>
+    <div class="chapter-title-ja">LAYERED PARK<br><span style="font-size:0.6em;color:#8a6f30;font-weight:300;">(remix)</span></div>
+    <div class="chapter-title-en">LAYERED PARK (remix)</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">第7章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="line">認知を共有した後に、起こること。</span>
+    <span class="break">Urban Cognition Interfaceは、認知を扱うための基盤。その先には何があるのか。</span>
+    <span class="break">認知が重なった先に現れる風景。ひとつのイメージとして。</span>
+    <span class="big gold">LAYERED PARK</span>
+    <span class="break">ある意味では、自分の理想の公園と言ってもいい。</span>
+    <span class="divider">⸻</span>
+    <span class="break">都市にはたくさんの人がいる。</span>
+    <span class="line">歩くのが速い人。立ち止まるのが好きな人。</span>
+    <span class="line">音で変化に触れる人。人混みに目が眩む人。</span>
+    <span class="line">見たものに心おどる人。匂いで季節を感じる人。</span>
+    <span class="break">誰もが異なる身体と感覚を持ちながら、同じ都市を共有している。</span>
+    <span class="divider">⸻</span>
+    <span class="line">しかし、都市は必ずしもその違いを前提に作られていない。</span>
+    <span class="break">その結果、目に見えない段差が生まれる。</span>
+    <span class="break">物理的な段差以上の、認知の段差だ。</span>
+    <span class="line">方向感覚への不安。情報へのアクセスの差。感覚過敏による疲労。心理的な疎外感。孤独。</span>
+    <span class="divider">⸻</span>
+    <span class="break">誰かにとって快適な場所は、別の誰かにとっては近寄りがたい場所になっている。</span>
+    <span class="break">特に公園は象徴的な空間。</span>
+    <span class="line">公園は本来、誰にでも開かれた余白である。</span>
+    <span class="line">目的を強制されず、生産性も求められず、ただ存在することが許される場所。</span>
+    <span class="break">しかし現実には、その余白を自由に使える人と、そうでない人がいる。</span>
+    <span class="divider">⸻</span>
+    <span class="break">総じて都市は、目に見えない認知の段差で溢れている。</span>
+    <span class="break">その段差を、物理的に埋めようとするのは難しい。都市を作り変えるには、膨大な時間とコストが必要になる。</span>
+    <span class="break">その時ふと思った。</span>
+    <span class="line">認知の段差は、本当に埋めるべきものなのだろうか。</span>
+    <span class="break">違いをなくすことが、理想なのだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">むしろ都市の豊かさは、その違いの中にある。</span>
+    <span class="line">同じ公園を見ても、違うものが見える。</span>
+    <span class="break">同じ道を歩いても、違う風景を感じる。</span>
+    <span class="line">都市には、無数の認知が存在している。</span>
+    <span class="line">問題なのは、認知差そのものではない。</span>
+    <span class="break">互いの認知が見えないことだ。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そして何より、すべての人にとって完璧な空間は、ひとつの設計だけで実現できない。</span>
+    <span class="break">だとすれば、</span>
+    <span class="break emphasis">空間を変えるのではなく、認知にレイヤーを重ねるという発想はどうだろうか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">物理空間を共有したまま。その上に、一人ひとり異なる認知のレイヤーを重ねる。</span>
+    <span class="line">同じ公園にいながら、ある人には、安全な移動を支援する情報が届く。</span>
+    <span class="line">ある子どもには、木々の間から物語が立ち上がる。</span>
+    <span class="break">ある人には、地域の歴史や文化が語りかける。</span>
+    <span class="line gold">空間はひとつ。体験が重なる。</span>
+    <span class="divider">⸻</span>
+    <span class="break">その可能性を感じた技術のひとつが、音声MRだった。</span>
+    <span class="line">景観を壊すわけでもない。巨大な設備を置くわけでもない。</span>
+    <span class="line">既存の空間に、軽やかなデジタルレイヤーを重ねる。</span>
+    <span class="break">それは単なる情報提供ではない。認知を拡張するためのレイヤーだ。</span>
+    <span class="divider">⸻</span>
+    <span class="break">しかし、LAYERED PARKの本質は技術ではない。</span>
+    <span class="break">個別最適化でもない。</span>
+    <span class="line">人にはそれぞれ、得意と不得意がある。</span>
+    <span class="line">歩行が苦手な人。音に敏感な人。視覚に頼らず空間を感じる人。記憶を大切にしている人。</span>
+    <span class="divider">⸻</span>
+    <span class="break">これまで都市は、そうした違いを個人の問題として扱うことが多かった。</span>
+    <span class="break">しかし、その違いは本当に問題なのだろうか。</span>
+    <span class="break">認知差は資源ではなかったか。</span>
+    <span class="divider">⸻</span>
+    <span class="break">異なる認知を持つ人同士が、互いの世界に触れられるようになった時。</span>
+    <span class="line">その違いは、欠損ではなく豊かさになる。</span>
+    <span class="break">分断ではなく、接続資源になる。</span>
+    <span class="break emphasis">LAYERED PARKの核心はそこにある。</span>
+    <span class="line">一人ひとりが違うまま、同じ空間を共有すること。</span>
+    <span class="break">認知の違いを消すのではなく、認知の違いと共にあること。</span>
+    <span class="big">そんな公園だ。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そしてこのlayeredは、公園だけで終わらない。</span>
+    <span class="line">観光。移動。地域文化。福祉。記憶。</span>
+    <span class="break">都市のあらゆる場所に、認知のレイヤーが存在している。</span>
+    <span class="divider">⸻</span>
+    <span class="break">例えば。</span>
+    <span class="break">小さい頃よく遊んだ公園のベンチに座る。</span>
+    <span class="line">夕暮れ。風が吹く。</span>
+    <span class="break">その時、ふと声が聞こえる。</span>
+    <div class="quote">「チャイムが鳴ったから帰るわよ。」</div>
+    <span class="break">お母さんの声がする。</span>
+    <span class="break">もちろん、そこに本当にいるわけではない。</span>
+    <span class="break">でも、その瞬間。忘れていた記憶が立ち上がる。</span>
+    <span class="divider">⸻</span>
+    <span class="line">場所を認知していたと思っていた。</span>
+    <span class="line">でも本当は、記憶を認知していた。</span>
+    <span class="break">時間を認知していた。</span>
+    <span class="divider">⸻</span>
+    <span class="line">都市には、まだ見えていない地層がある。</span>
+    <span class="line">誰かの記憶。誰かの感覚。誰かの物語。</span>
+    <span class="break">それらは消えたのではなく、見えていないだけ。</span>
+    <span class="break">認知のレイヤーは、今も都市の中に存在している。</span>
+    <span class="divider">⸻</span>
+    <span class="break">LAYERED PARKは、その物語に触れるための風景かもしれない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">そしていつか。</span>
+    <span class="line">同じ都市を見ながら、</span>
+    <span class="line">少しずつ違う世界を共有できるようになるのかもしれない。</span>
+  </div>
+  <div class="back-nav">
+    <a href="#nav-menu" class="back-link">↑ MENU</a>
+    <a href="#ch8" class="back-link">NEXT →</a>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- 終章 -->
+<section class="chapter fade-in" id="ch8">
+  <div class="chapter-header">
+    <span class="chapter-num">EPILOGUE</span>
+    <div class="chapter-title-ja">ギフト</div>
+    <div class="chapter-title-en">Gift</div>
+    <div class="chapter-divider"></div>
+  </div>
+  <div class="music-block">
+    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+    <div class="music-info">
+      <div class="music-label">LISTEN ON SUNO</div>
+      <div class="music-title">終章</div>
+    </div>
+  </div>
+  <div class="chapter-body">
+    <span class="break">特別なことは、何もない。</span>
+    <span class="break">これを読んで、世界が急に変わるわけでもない。</span>
+    <span class="divider">⸻</span>
+    <span class="line">明日になれば、またいつもの街を歩く。</span>
+    <span class="line">いつもの道を通る。</span>
+    <span class="break">いつもの公園に立ち寄る。</span>
+    <span class="break">目の前の風景も、たぶん昨日と大きくは変わらない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">それでも。</span>
+    <span class="break">もしかすると、少しだけ見え方が変わるかもしれない。</span>
+    <span class="divider">⸻</span>
+    <span class="line">なぜあの場所が気になるのだろう。</span>
+    <span class="line">なぜあの風景を覚えているのだろう。</span>
+    <span class="break">なぜあの言葉が引っかかったのだろう。</span>
+    <span class="break">そんな問いが、ふと立ち上がることがあるかもしれない。</span>
+    <span class="divider">⸻</span>
+    <span class="line">違和感は、解決するためだけにあるものではない。</span>
+    <span class="break">世界との接点として、そこに存在している。</span>
+    <span class="divider">⸻</span>
+    <span class="line">同じ世界を見ているようで、少しずつ違う世界を見ている。</span>
+    <span class="divider">⸻</span>
+    <span class="line">だからこそ、ときどきすれ違う。伝わらない。分かり合えない。</span>
+    <span class="divider">⸻</span>
+    <span class="break">でも同時に。</span>
+    <span class="break">だからこそ、誰かの見ている世界に出会うことがある。</span>
+    <span class="line">見えていなかった風景。気づかなかった感覚。知らなかった物語。</span>
+    <span class="divider">⸻</span>
+    <span class="line">それらは都市の中にある。</span>
+    <span class="break">そして、それぞれの中にある。</span>
+    <span class="divider">⸻</span>
+    <span class="line">都市には、まだ見えていない認知の地層がある。</span>
+    <span class="break">まだ言葉になっていない認知がある。</span>
+    <span class="divider">⸻</span>
+    <span class="break">これから先、何かに違和感を覚えたなら。</span>
+    <span class="break">少しだけ立ち止まり、耳を澄ませてみる。</span>
+    <span class="line">そこには、まだ言葉になっていない何かがあるかもしれない。</span>
+    <span class="break">そこから始まるものがあるかもしれない。</span>
+    <span class="divider">⸻</span>
+    <span class="big gold">これは、そのための小さなギフト。</span>
+  </div>
+  <div class="epilogue-closing">
+    <div class="lab">PUBLIC MENTOR LAB</div>
+    <div class="author">浮貝 忍 / UKKY</div>
+  </div>
+</section>
+
+<div class="ch-sep"></div>
+
+<!-- AFTER READING -->
+<section id="after-reading">
+  <div class="ar-title">after reading — 全曲、もう一度。</div>
+  <ul class="ar-list">
+    <li><span>序章 / PROLOGUE</span>合意形成の前に、認知共有がある</li>
+    <li><span>第1章 / CHAPTER 01</span>認知とは何か</li>
+    <li><span>第2章 / CHAPTER 02</span>人は同じ世界を見ていない</li>
+    <li><span>第3章 / CHAPTER 03</span>認知差は問題なのか</li>
+    <li><span>第4章 / CHAPTER 04</span>主観が都市をつくる</li>
+    <li><span>第5章 / CHAPTER 05</span>認知のレイヤー</li>
+    <li><span>第6章 / CHAPTER 06</span>Urban Cognition Interface (remix)</li>
+    <li><span>第7章 / CHAPTER 07</span>LAYERED PARK (remix)</li>
+    <li><span>終章 / EPILOGUE</span>ギフト</li>
+  </ul>
+  <div class="ar-closing">
+    <span class="gold">合意形成の前に、認知共有がある。</span><br>
+    その仮説を、辿ってきた。
+  </div>
+  <div class="ar-final">PUBLIC MENTOR LAB — 了</div>
+</section>
+
+</div><!-- /main -->
+
+<script>
+function checkPassword(){
+  var val = document.getElementById('pw-input').value;
+  if(val === 'ukkyukai'){
+    document.getElementById('password-screen').style.display='none';
+    document.getElementById('main').style.display='block';
+    window.scrollTo(0,0);
+  } else {
+    var err = document.getElementById('pw-error');
+    err.classList.add('show');
+    setTimeout(function(){err.classList.remove('show');},2000);
+  }
+}
+document.getElementById('pw-input').addEventListener('keydown',function(e){
+  if(e.key==='Enter') checkPassword();
+});
+
+// Scroll fade
+var faders = document.querySelectorAll('.fade-in');
+var observer = new IntersectionObserver(function(entries){
+  entries.forEach(function(entry){
+    if(entry.isIntersecting){
+      entry.target.classList.add('visible');
+    }
+  });
+},{threshold:0.05});
+faders.forEach(function(el){observer.observe(el);});
+</script>
+</body>
+</html>
