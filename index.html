@@ -9,14 +9,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Zen+Kaku+Gothic+New:wght@300;400;700&family=Space+Mono:ital@0;1&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --bg:#0a0a0a;
-  --gold:#c9a84c;
-  --gold-dim:#8a6f30;
-  --white:#f0ede6;
-  --gray:#888;
-  --light-gray:#333;
-}
 html{scroll-behavior:smooth;}
 body{
   background:#0a0a0a;
@@ -25,8 +17,6 @@ body{
   font-weight:300;
   overflow-x:hidden;
 }
-
-/* PASSWORD */
 #password-screen{
   position:fixed;inset:0;
   background:#0a0a0a;
@@ -35,448 +25,116 @@ body{
   z-index:9999;
   gap:32px;
 }
-.pw-logo{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:11px;
-  letter-spacing:0.4em;
-  color:#8a6f30;
-}
-.pw-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(28px,6vw,52px);
-  letter-spacing:0.08em;
-  color:#c9a84c;
-  text-align:center;
-  line-height:1.1;
-}
-.pw-sub{
-  font-size:11px;
-  letter-spacing:0.3em;
-  color:#888;
-  text-align:center;
-}
-.pw-input-wrap{
-  display:flex;flex-direction:column;
-  align-items:center;gap:12px;
-}
+.pw-logo{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:0.4em;color:#8a6f30;}
+.pw-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(28px,6vw,52px);letter-spacing:0.08em;color:#c9a84c;text-align:center;line-height:1.1;}
+.pw-sub{font-size:11px;letter-spacing:0.3em;color:#888;text-align:center;}
+.pw-input-wrap{display:flex;flex-direction:column;align-items:center;gap:12px;}
 .pw-input-wrap input{
-  background:transparent;
-  border:1px solid #333;
-  border-bottom:1px solid #c9a84c;
-  color:#f0ede6;
-  font-family:'Space Mono',monospace;
-  font-size:14px;
-  letter-spacing:0.3em;
-  padding:12px 20px;
-  text-align:center;
-  outline:none;
-  width:240px;
-  transition:border-color 0.3s;
+  background:transparent;border:1px solid #333;border-bottom:1px solid #c9a84c;
+  color:#f0ede6;font-family:'Space Mono',monospace;font-size:14px;letter-spacing:0.3em;
+  padding:12px 20px;text-align:center;outline:none;width:240px;transition:border-color 0.3s;
 }
 .pw-input-wrap input:focus{border-color:#c9a84c;}
 .pw-btn{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:13px;
-  letter-spacing:0.4em;
-  color:#0a0a0a;
-  background:#c9a84c;
-  border:none;
-  padding:10px 32px;
-  cursor:pointer;
-  transition:opacity 0.2s;
+  font-family:'Bebas Neue',sans-serif;font-size:13px;letter-spacing:0.4em;
+  color:#0a0a0a;background:#c9a84c;border:none;padding:10px 32px;cursor:pointer;transition:opacity 0.2s;
 }
 .pw-btn:hover{opacity:0.8;}
-.pw-error{
-  font-size:11px;
-  letter-spacing:0.2em;
-  color:#c9a84c;
-  opacity:0;
-  transition:opacity 0.3s;
-}
+.pw-error{font-size:11px;letter-spacing:0.2em;color:#c9a84c;opacity:0;transition:opacity 0.3s;}
 .pw-error.show{opacity:1;}
-
-/* MAIN */
 #main{display:none;}
-
-/* NOISE OVERLAY */
 body::before{
-  content:'';
-  position:fixed;inset:0;
+  content:'';position:fixed;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-  pointer-events:none;
-  z-index:1;
-  opacity:0.4;
+  pointer-events:none;z-index:1;opacity:0.4;
 }
-
-/* COVER */
 #cover{
-  height:100svh;
-  display:flex;flex-direction:column;
+  height:100svh;display:flex;flex-direction:column;
   justify-content:center;align-items:center;
-  padding:60px 24px;
-  position:relative;
-  text-align:center;
+  padding:60px 24px;position:relative;text-align:center;
 }
 #cover::before{
-  content:'';
-  position:absolute;inset:0;
+  content:'';position:absolute;inset:0;
   background:radial-gradient(ellipse at 50% 40%, rgba(201,168,76,0.06) 0%, transparent 70%);
   pointer-events:none;
 }
-.cover-label{
-  font-family:'Space Mono',monospace;
-  font-size:10px;
-  letter-spacing:0.5em;
-  color:#8a6f30;
-  margin-bottom:48px;
-  text-align:center;
-}
-.cover-main-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(36px,9vw,88px);
-  letter-spacing:0.06em;
-  color:#c9a84c;
-  line-height:0.95;
-  margin-bottom:24px;
-  text-align:center
-}
-.cover-sub-title{
-  font-size:clamp(12px,2.5vw,16px);
-  letter-spacing:0.2em;
-  color:#f0ede6;
-  margin-bottom:8px;
-  font-weight:400;
-}
-.cover-dash{
-  font-family:'Space Mono',monospace;
-  font-size:11px;
-  letter-spacing:0.15em;
-  color:#888;
-  margin-bottom:48px;
-  text-align:center
-}
-.cover-author{
-  font-size:12px;
-  letter-spacing:0.3em;
-  color:#888;
-  margin-bottom:80px;
-  text-align:center
-}
-.cover-scroll{
-  font-family:'Space Mono',monospace;
-  font-size:10px;
-  letter-spacing:0.4em;
-  color:#8a6f30;
-  animation:pulse 2s ease-in-out infinite;
-}
+.cover-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.5em;color:#8a6f30;margin-bottom:48px;text-align:center;}
+.cover-main-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(36px,9vw,88px);letter-spacing:0.06em;color:#c9a84c;line-height:0.95;margin-bottom:24px;text-align:center;}
+.cover-sub-title{font-size:clamp(12px,2.5vw,16px);letter-spacing:0.2em;color:#f0ede6;margin-bottom:8px;font-weight:400;}
+.cover-dash{font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.15em;color:#888;margin-bottom:48px;text-align:center;}
+.cover-author{font-size:12px;letter-spacing:0.3em;color:#888;margin-bottom:80px;text-align:center;}
+.cover-scroll{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.4em;color:#8a6f30;animation:pulse 2s ease-in-out infinite;}
 @keyframes pulse{0%,100%{opacity:0.4;}50%{opacity:1;}}
-
-/* NAV MENU */
-#nav-menu{
-  padding:80px 24px 40px;
-  max-width:640px;
-  margin:0 auto;
-}
-.nav-label{
-  font-family:'Space Mono',monospace;
-  font-size:10px;
-  letter-spacing:0.5em;
-  color:#8a6f30;
-  margin-bottom:40px;
-  text-align:center;
-}
-.nav-list{
-  list-style:none;
-  display:flex;flex-direction:column;
-  gap:0;
-}
-.nav-item a{
-  display:flex;
-  align-items:baseline;
-  gap:16px;
-  padding:16px 0;
-  border-bottom:1px solid #1a1a1a;
-  text-decoration:none;
-  transition:all 0.2s;
-}
+#nav-menu{padding:80px 24px 40px;max-width:640px;margin:0 auto;}
+.nav-label{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.5em;color:#8a6f30;margin-bottom:40px;text-align:center;}
+.nav-list{list-style:none;display:flex;flex-direction:column;gap:0;}
+.nav-item a{display:flex;align-items:baseline;gap:16px;padding:16px 0;border-bottom:1px solid #1a1a1a;text-decoration:none;transition:all 0.2s;}
 .nav-item a:hover .nav-title{color:#c9a84c;}
 .nav-item a:hover .nav-num{color:#c9a84c;}
-.nav-num{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:11px;
-  letter-spacing:0.3em;
-  color:#333;
-  min-width:36px;
-}
-.nav-title{
-  font-size:13px;
-  letter-spacing:0.15em;
-  color:#888;
-  transition:color 0.2s;
-}
-
-/* CHAPTER SECTION */
-.chapter{
-  min-height:100vh;
-  padding:80px 24px;
-  max-width:680px;
-  margin:0 auto;
-  position:relative;
-}
-.chapter-header{
-  margin-bottom:64px;
-}
-.chapter-num{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:10px;
-  letter-spacing:0.5em;
-  color:#8a6f30;
-  margin-bottom:16px;
-  display:block;
-}
-.chapter-title-ja{
-  font-family:'Zen Kaku Gothic New',sans-serif;
-  font-size:clamp(22px,5vw,36px);
-  font-weight:700;
-  color:#f0ede6;
-  line-height:1.3;
-  margin-bottom:8px;
-  letter-spacing:0.05em;
-}
-.chapter-title-en{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:clamp(13px,3vw,18px);
-  letter-spacing:0.3em;
-  color:#c9a84c;
-}
-.chapter-divider{
-  width:40px;
-  height:1px;
-  background:#c9a84c;
-  margin:24px 0;
-  opacity:0.5;
-}
-
-/* MUSIC */
+.nav-num{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:0.3em;color:#333;min-width:36px;}
+.nav-title{font-size:13px;letter-spacing:0.15em;color:#888;transition:color 0.2s;}
+.chapter{min-height:100vh;padding:80px 24px;max-width:680px;margin:0 auto;position:relative;}
+.chapter-header{margin-bottom:64px;}
+.chapter-num{font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:0.5em;color:#8a6f30;margin-bottom:16px;display:block;}
+.chapter-title-ja{font-family:'Zen Kaku Gothic New',sans-serif;font-size:clamp(22px,5vw,36px);font-weight:700;color:#f0ede6;line-height:1.3;margin-bottom:8px;letter-spacing:0.05em;}
+.chapter-title-en{font-family:'Bebas Neue',sans-serif;font-size:clamp(13px,3vw,18px);letter-spacing:0.3em;color:#c9a84c;}
+.chapter-divider{width:40px;height:1px;background:#c9a84c;margin:24px 0;opacity:0.5;}
 .music-block{
-  display:flex;
-  align-items:center;
-  gap:16px;
-  padding:16px 20px;
-  border:1px solid #1a1a1a;
-  margin-bottom:48px;
-  background:rgba(201,168,76,0.03);
+  display:flex;align-items:center;gap:16px;
+  padding:16px 20px;border:1px solid #1a1a1a;
+  margin-bottom:48px;background:rgba(201,168,76,0.03);
+  text-decoration:none;transition:border-color 0.3s;cursor:pointer;
 }
-.music-qr{
-  width:56px;height:56px;
-  background:#1a1a1a;
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.music-qr span{
-  font-size:8px;
-  color:#333;
-  text-align:center;
-  letter-spacing:0.1em;
-  font-family:'Space Mono',monospace;
-}
-.music-info{
-  flex:1;
-}
-.music-label{
-  font-family:'Space Mono',monospace;
-  font-size:9px;
-  letter-spacing:0.4em;
-  color:#8a6f30;
-  margin-bottom:4px;
-}
-.music-title{
-  font-size:13px;
-  color:#888;
-  letter-spacing:0.1em;
-}
-
-/* BODY TEXT */
-.chapter-body{
-  font-size:15px;
-  line-height:2.2;
-  color:#c8c4bc;
-  letter-spacing:0.05em;
-}
-.chapter-body p{
-  margin-bottom:1.8em;
-}
-.chapter-body .line{
-  display:block;
-  margin-bottom:0.3em;
-}
-.chapter-body .break{
-  display:block;
-  margin-bottom:1.6em;
-}
-.chapter-body .divider{
-  display:block;
-  text-align:center;
-  color:#333;
-  margin:2em 0;
-  letter-spacing:0.5em;
-}
-.chapter-body .emphasis{
-  color:#f0ede6;
-  font-weight:400;
-}
-.chapter-body .gold{
-  color:#c9a84c;
-}
-.chapter-body .big{
-  font-size:18px;
-  color:#f0ede6;
-  font-weight:700;
-  display:block;
-  margin:1.5em 0 0.5em;
-  letter-spacing:0.1em;
-}
-.chapter-body .quote{
-  border-left:2px solid #c9a84c;
-  padding-left:20px;
-  margin:2em 0;
-  color:#f0ede6;
-  font-size:16px;
-  line-height:2;
-}
-.chapter-body .list-item{
-  display:flex;
-  gap:12px;
-  margin-bottom:0.4em;
-  color:#c8c4bc;
-}
-.chapter-body .list-item::before{
-  content:'—';
-  color:#c9a84c;
-  flex-shrink:0;
-}
-
-/* BACK NAV */
-.back-nav{
-  margin-top:80px;
-  padding-top:40px;
-  border-top:1px solid #1a1a1a;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-}
-.back-link{
-  font-family:'Space Mono',monospace;
-  font-size:10px;
-  letter-spacing:0.4em;
-  color:#8a6f30;
-  text-decoration:none;
-  transition:color 0.2s;
-}
+.music-block:hover{border-color:#8a6f30;}
+.music-qr{width:64px;height:64px;flex-shrink:0;background:#111;display:flex;align-items:center;justify-content:center;}
+.music-qr img{width:60px;height:60px;display:block;}
+.music-info{flex:1;}
+.music-label{font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.4em;color:#8a6f30;margin-bottom:4px;}
+.music-title{font-size:13px;color:#f0ede6;letter-spacing:0.1em;margin-bottom:4px;}
+.music-tap{font-family:'Space Mono',monospace;font-size:8px;letter-spacing:0.2em;color:#555;}
+.chapter-body{font-size:15px;line-height:2.2;color:#c8c4bc;letter-spacing:0.05em;}
+.chapter-body .line{display:block;margin-bottom:0.3em;}
+.chapter-body .break{display:block;margin-bottom:1.6em;}
+.chapter-body .divider{display:block;text-align:center;color:#333;margin:2em 0;letter-spacing:0.5em;}
+.chapter-body .emphasis{color:#f0ede6;font-weight:400;}
+.chapter-body .gold{color:#c9a84c;}
+.chapter-body .big{font-size:18px;color:#f0ede6;font-weight:700;display:block;margin:1.5em 0 0.5em;letter-spacing:0.1em;}
+.chapter-body .quote{border-left:2px solid #c9a84c;padding-left:20px;margin:2em 0;color:#f0ede6;font-size:16px;line-height:2;}
+.chapter-body .list-item{display:flex;gap:12px;margin-bottom:0.4em;color:#c8c4bc;}
+.chapter-body .list-item::before{content:'—';color:#c9a84c;flex-shrink:0;}
+.back-nav{margin-top:80px;padding-top:40px;border-top:1px solid #1a1a1a;display:flex;justify-content:space-between;align-items:center;}
+.back-link{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.4em;color:#8a6f30;text-decoration:none;transition:color 0.2s;}
 .back-link:hover{color:#c9a84c;}
-
-/* COVER SECTION (chapter 0) */
-.prologue-tag{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:10px;
-  letter-spacing:0.5em;
-  color:#8a6f30;
+.epilogue-closing{margin-top:60px;padding:40px 0;border-top:1px solid #1a1a1a;text-align:center;}
+.epilogue-closing .lab{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:0.5em;color:#8a6f30;margin-bottom:12px;}
+.epilogue-closing .author{font-size:13px;letter-spacing:0.2em;color:#888;}
+#after-reading{padding:80px 24px;max-width:640px;margin:0 auto;text-align:center;}
+.ar-title{font-family:'Bebas Neue',sans-serif;font-size:11px;letter-spacing:0.5em;color:#8a6f30;margin-bottom:48px;}
+.ar-list{list-style:none;display:flex;flex-direction:column;gap:0;margin-bottom:64px;}
+.ar-item{
+  display:flex;align-items:center;gap:16px;
+  padding:16px 0;border-bottom:1px solid #1a1a1a;
+  text-decoration:none;transition:border-color 0.2s;cursor:pointer;
 }
-
-/* EPILOGUE */
-.epilogue-closing{
-  margin-top:60px;
-  padding:40px 0;
-  border-top:1px solid #1a1a1a;
-  text-align:center;
-}
-.epilogue-closing .lab{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:11px;
-  letter-spacing:0.5em;
-  color:#8a6f30;
-  margin-bottom:12px;
-}
-.epilogue-closing .author{
-  font-size:13px;
-  letter-spacing:0.2em;
-  color:#888;
-}
-
-/* AFTER READING */
-#after-reading{
-  padding:80px 24px;
-  max-width:640px;
-  margin:0 auto;
-  text-align:center;
-}
-.ar-title{
-  font-family:'Bebas Neue',sans-serif;
-  font-size:11px;
-  letter-spacing:0.5em;
-  color:#8a6f30;
-  margin-bottom:48px;
-}
-.ar-list{
-  list-style:none;
-  display:flex;flex-direction:column;
-  gap:24px;
-  margin-bottom:64px;
-}
-.ar-list li{
-  font-size:13px;
-  letter-spacing:0.2em;
-  color:#555;
-  line-height:1.8;
-}
-.ar-list li span{
-  display:block;
-  font-family:'Bebas Neue',sans-serif;
-  font-size:10px;
-  letter-spacing:0.4em;
-  color:#333;
-  margin-bottom:2px;
-}
-.ar-closing{
-  font-size:13px;
-  letter-spacing:0.15em;
-  color:#888;
-  line-height:2.5;
-  margin-bottom:48px;
-}
+.ar-item:hover{border-color:#8a6f30;}
+.ar-qr{width:48px;height:48px;flex-shrink:0;background:#111;display:flex;align-items:center;justify-content:center;}
+.ar-qr img{width:44px;height:44px;display:block;}
+.ar-text{flex:1;text-align:left;}
+.ar-text span{display:block;font-family:'Bebas Neue',sans-serif;font-size:10px;letter-spacing:0.4em;color:#333;margin-bottom:2px;}
+.ar-text p{font-size:13px;letter-spacing:0.15em;color:#555;}
+.ar-closing{font-size:13px;letter-spacing:0.15em;color:#888;line-height:2.5;margin-bottom:48px;}
 .ar-closing .gold{color:#c9a84c;}
-.ar-final{
-  font-family:'Space Mono',monospace;
-  font-size:10px;
-  letter-spacing:0.4em;
-  color:#333;
-}
-
-/* SCROLL FADE */
-.fade-in{
-  opacity:0;
-  transform:translateY(20px);
-  transition:opacity 0.8s ease, transform 0.8s ease;
-}
-.fade-in.visible{
-  opacity:1;
-  transform:translateY(0);
-}
-
-/* CHAPTER SEPARATOR */
-.ch-sep{
-  height:1px;
-  background:linear-gradient(to right, transparent, #1a1a1a, transparent);
-  margin:0 24px;
-}
+.ar-final{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.4em;color:#333;}
+.fade-in{opacity:0;transform:translateY(20px);transition:opacity 0.8s ease,transform 0.8s ease;}
+.fade-in.visible{opacity:1;transform:translateY(0);}
+.ch-sep{height:1px;background:linear-gradient(to right,transparent,#1a1a1a,transparent);margin:0 24px;}
 </style>
 </head>
 <body>
 
-<!-- PASSWORD -->
 <div id="password-screen">
-  <div class="pw-logo">PUBLIC MENTOR LAB</div>
-  <div class="pw-title">Urban Cognition<br>Interface</div>
+  <div class="pw-logo">公務員の愉快な働き方</div>
+  <div class="pw-title">Urban Cognition<br>Interface-remix-</div>
   <div class="pw-sub">Members Only — アクセスコードを入力</div>
   <div class="pw-input-wrap">
     <input type="password" id="pw-input" placeholder="ACCESS CODE" autocomplete="off">
@@ -485,20 +143,17 @@ body::before{
   </div>
 </div>
 
-<!-- MAIN -->
 <div id="main">
 
-<!-- COVER -->
 <section id="cover">
-  <div class="cover-label">PUBLIC MENTOR LAB — WEBZINE vol.2</div>
+  <div class="cover-label">公務員の愉快な働き方 — WEBZINE vol.3</div>
   <div class="cover-main-title">Urban<br>Cognition<br>Interface</div>
   <div class="cover-sub-title">合意形成の前に、認知共有がある</div>
-  <div class="cover-dash">— 公園行政の覚書 2 —</div>
-  <div class="cover-author">浮貝 忍 / UKKY｜2025</div>
+  <div class="cover-dash">— 公園行政の覚書 3 —</div>
+  <div class="cover-author">浮貝 忍 / UKKY｜2026</div>
   <div class="cover-scroll">scroll ↓</div>
 </section>
 
-<!-- NAV -->
 <div id="nav-menu">
   <div class="nav-label">どこから入りますか</div>
   <ul class="nav-list">
@@ -524,13 +179,14 @@ body::before{
     <div class="chapter-title-en">Before Consensus, Cognition</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/dVJk76Llf5ZJWxew" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/dVJk76Llf5ZJWxew" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">序章</div>
+      <div class="music-title">序章　認知</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">会議をする。</span>
     <span class="line">意見を出し合う。</span>
@@ -615,13 +271,14 @@ body::before{
     <div class="chapter-title-en">What Is Cognition</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/62bH08k8roznrvuC" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/62bH08k8roznrvuC" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第1章</div>
+      <div class="music-title">1 合意形成の前に</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">認知という言葉を使っている。</span>
     <span class="line">でも実際のところ、それが何なのかを考える機会は少ない。</span>
@@ -714,13 +371,14 @@ body::before{
     <div class="chapter-title-en">No One Sees the Same World</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/wPEkUtTgrdlQh1g7" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/wPEkUtTgrdlQh1g7" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第2章</div>
+      <div class="music-title">2 Same World</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">人が見ている世界。</span>
     <span class="line">でも実際には、世界のすべてを見ているわけではない。</span>
@@ -818,13 +476,14 @@ body::before{
     <div class="chapter-title-en">Is the Gap a Problem</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/PyfPin9UN4JyS1qM" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/PyfPin9UN4JyS1qM" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第3章</div>
+      <div class="music-title">3 資源</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">人は同じ世界を見ていない。</span>
     <span class="line">だとすると、次に浮かぶ問いがある。</span>
@@ -896,17 +555,6 @@ body::before{
     <span class="line">それぞれ違う世界があるにもかかわらず。</span>
     <span class="break">ひとつの意見として平準化される。</span>
     <span class="divider">⸻</span>
-    <span class="break">そこで始まるのは、</span>
-    <span class="line">正しいか。多数か。採用するべきか。</span>
-    <span class="break">そんな評価や判断の議論だ。</span>
-    <span class="break">でもその前に、本当は見えていなければならないものがある。</span>
-    <span class="line">誰がどんな世界を見ているのか。</span>
-    <span class="break">どんな認知からその意見が生まれたのか。</span>
-    <span class="divider">⸻</span>
-    <span class="line">認知差が見えるようになれば何が変わるのか。</span>
-    <span class="line">対立しているように見えた意見の背景が見えてくる。</span>
-    <span class="break">そして問いそのものが変わり始める。</span>
-    <span class="divider">⸻</span>
     <span class="line gold">どちらが正しいか。</span>
     <span class="line gold">ではなく、</span>
     <span class="break gold">なぜそう見えているか。</span>
@@ -932,13 +580,14 @@ body::before{
     <div class="chapter-title-en">Subjectivity Builds the City</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/veNUuJVuvBbKkoCX" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/veNUuJVuvBbKkoCX" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第4章</div>
+      <div class="music-title">4 都市のルビは主観</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">認知差は、ある。</span>
     <span class="line">認知差は、見えることが大切だ。</span>
@@ -1011,13 +660,14 @@ body::before{
     <div class="chapter-title-en">The Cognitive Layer</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/oBjzbKygywTcJg8Z" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/oBjzbKygywTcJg8Z" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第5章</div>
+      <div class="music-title">5 認知のレイヤー</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">都市のもうひとつの地層。</span>
     <span class="break">少し大げさな表現に聞こえるかもしれない。</span>
@@ -1125,13 +775,14 @@ body::before{
     <div class="chapter-title-en">Urban Cognition Interface (remix)</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/6JvJ9WYVJEcKpokk" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/6JvJ9WYVJEcKpokk" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第6章</div>
+      <div class="music-title">6 UCI -remix-</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">都市には認知の地層がある。</span>
     <span class="line">それは確かに存在している。</span>
@@ -1236,13 +887,14 @@ body::before{
     <div class="chapter-title-en">LAYERED PARK (remix)</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/jvf3eF0hyoHiByBk" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/jvf3eF0hyoHiByBk" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">第7章</div>
+      <div class="music-title">7 layered park -remix-</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="line">認知を共有した後に、起こること。</span>
     <span class="break">Urban Cognition Interfaceは、認知を扱うための基盤。その先には何があるのか。</span>
@@ -1356,13 +1008,14 @@ body::before{
     <div class="chapter-title-en">Gift</div>
     <div class="chapter-divider"></div>
   </div>
-  <div class="music-block">
-    <div class="music-qr"><span>QR<br>coming<br>soon</span></div>
+  <a class="music-block" href="https://suno.com/s/362i6gvX820PK8Pf" target="_blank">
+    <div class="music-qr"><img src="https://chart.googleapis.com/chart?chs=60x60&cht=qr&chl=https://suno.com/s/362i6gvX820PK8Pf" alt="QR"></div>
     <div class="music-info">
       <div class="music-label">LISTEN ON SUNO</div>
-      <div class="music-title">終章</div>
+      <div class="music-title">終章　gift</div>
+      <div class="music-tap">QRコードをタップして聴く</div>
     </div>
-  </div>
+  </a>
   <div class="chapter-body">
     <span class="break">特別なことは、何もない。</span>
     <span class="break">これを読んで、世界が急に変わるわけでもない。</span>
@@ -1405,7 +1058,7 @@ body::before{
     <span class="big gold">これは、そのための小さなギフト。</span>
   </div>
   <div class="epilogue-closing">
-    <div class="lab">PUBLIC MENTOR LAB</div>
+    <div class="lab">公務員の愉快な働き方</div>
     <div class="author">浮貝 忍 / UKKY</div>
   </div>
 </section>
@@ -1416,34 +1069,61 @@ body::before{
 <section id="after-reading">
   <div class="ar-title">after reading — 全曲、もう一度。</div>
   <ul class="ar-list">
-    <li><span>序章 / PROLOGUE</span>合意形成の前に、認知共有がある</li>
-    <li><span>第1章 / CHAPTER 01</span>認知とは何か</li>
-    <li><span>第2章 / CHAPTER 02</span>人は同じ世界を見ていない</li>
-    <li><span>第3章 / CHAPTER 03</span>認知差は問題なのか</li>
-    <li><span>第4章 / CHAPTER 04</span>主観が都市をつくる</li>
-    <li><span>第5章 / CHAPTER 05</span>認知のレイヤー</li>
-    <li><span>第6章 / CHAPTER 06</span>Urban Cognition Interface (remix)</li>
-    <li><span>第7章 / CHAPTER 07</span>LAYERED PARK (remix)</li>
-    <li><span>終章 / EPILOGUE</span>ギフト</li>
+    <li><a class="ar-item" href="https://suno.com/s/dVJk76Llf5ZJWxew" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/dVJk76Llf5ZJWxew" alt="QR"></div>
+      <div class="ar-text"><span>序章 / PROLOGUE</span><p>序章　認知</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/62bH08k8roznrvuC" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/62bH08k8roznrvuC" alt="QR"></div>
+      <div class="ar-text"><span>第1章 / CHAPTER 01</span><p>1 合意形成の前に</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/wPEkUtTgrdlQh1g7" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/wPEkUtTgrdlQh1g7" alt="QR"></div>
+      <div class="ar-text"><span>第2章 / CHAPTER 02</span><p>2 Same World</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/PyfPin9UN4JyS1qM" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/PyfPin9UN4JyS1qM" alt="QR"></div>
+      <div class="ar-text"><span>第3章 / CHAPTER 03</span><p>3 資源</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/veNUuJVuvBbKkoCX" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/veNUuJVuvBbKkoCX" alt="QR"></div>
+      <div class="ar-text"><span>第4章 / CHAPTER 04</span><p>4 都市のルビは主観</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/oBjzbKygywTcJg8Z" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/oBjzbKygywTcJg8Z" alt="QR"></div>
+      <div class="ar-text"><span>第5章 / CHAPTER 05</span><p>5 認知のレイヤー</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/6JvJ9WYVJEcKpokk" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/6JvJ9WYVJEcKpokk" alt="QR"></div>
+      <div class="ar-text"><span>第6章 / CHAPTER 06</span><p>6 UCI -remix-</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/jvf3eF0hyoHiByBk" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/jvf3eF0hyoHiByBk" alt="QR"></div>
+      <div class="ar-text"><span>第7章 / CHAPTER 07</span><p>7 layered park -remix-</p></div>
+    </a></li>
+    <li><a class="ar-item" href="https://suno.com/s/362i6gvX820PK8Pf" target="_blank">
+      <div class="ar-qr"><img src="https://chart.googleapis.com/chart?chs=44x44&cht=qr&chl=https://suno.com/s/362i6gvX820PK8Pf" alt="QR"></div>
+      <div class="ar-text"><span>終章 / EPILOGUE</span><p>終章　gift</p></div>
+    </a></li>
   </ul>
   <div class="ar-closing">
     <span class="gold">合意形成の前に、認知共有がある。</span><br>
     その仮説を、辿ってきた。
   </div>
-  <div class="ar-final">PUBLIC MENTOR LAB — 了</div>
+  <div class="ar-final">公務員の愉快な働き方— 了</div>
 </section>
 
-</div><!-- /main -->
+</div>
 
 <script>
 function checkPassword(){
-  var val = document.getElementById('pw-input').value;
-  if(val === 'ukkyukai'){
+  var val=document.getElementById('pw-input').value;
+  if(val==='ukkyukai'){
     document.getElementById('password-screen').style.display='none';
     document.getElementById('main').style.display='block';
     window.scrollTo(0,0);
   } else {
-    var err = document.getElementById('pw-error');
+    var err=document.getElementById('pw-error');
     err.classList.add('show');
     setTimeout(function(){err.classList.remove('show');},2000);
   }
@@ -1451,14 +1131,10 @@ function checkPassword(){
 document.getElementById('pw-input').addEventListener('keydown',function(e){
   if(e.key==='Enter') checkPassword();
 });
-
-// Scroll fade
-var faders = document.querySelectorAll('.fade-in');
-var observer = new IntersectionObserver(function(entries){
+var faders=document.querySelectorAll('.fade-in');
+var observer=new IntersectionObserver(function(entries){
   entries.forEach(function(entry){
-    if(entry.isIntersecting){
-      entry.target.classList.add('visible');
-    }
+    if(entry.isIntersecting) entry.target.classList.add('visible');
   });
 },{threshold:0.05});
 faders.forEach(function(el){observer.observe(el);});
